@@ -1,9 +1,9 @@
+from tkinter import messagebox
 import customtkinter as ctk
 from tkinter import *
-import tkinter
 import openpyxl, xlrd
 import pathlib
-from openpyxl import workbook
+from openpyxl import Workbook
 
 #setando a aparencia padrao de sistema
 ctk.set_appearance_mode("System")
@@ -13,54 +13,154 @@ class App(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.layout_config()
-        self.appearence()
         self.todo_sistema()
     def layout_config(self):
-        self.title("Sistema de Gestao de Clientes")
-        self.geometry("900x500")
-
-    def appearence(self):
-        self.lb_apm = ctk.CTkLabel(self, text="Tema", bg_color="transparent", text_color=['#000', '#fff']).place(x=50, y=430)
-        self.opt_apm = ctk.CTkOptionMenu(self, values=["Light", "Dark", "Sistema"], command=self.change_apm).place(x=50, y=460)
-
+        self.title("Sistema de Cadastro")
+        self.geometry("700x500")
 
     def todo_sistema(self):
-        frame = ctk.CTkFrame(self, width=900, height=50, corner_radius=0, bg_color="teal", fg_color="teal").place(x=0, y=10)
-        title = ctk.CTkLabel(frame, text="Sistema de Gestao de clientes", font=("Century gothic bold", 24), text_color="#fff")
+        frame = ctk.CTkFrame(self, width=10000, height=50, corner_radius=0, bg_color="#3fc9c0", fg_color="#3fc9c0")
+        frame.place(x=0, y=0)
+        title = ctk.CTkLabel(frame, text="Cadastro de Medicamentos", font=("Century gothic bold", 24), text_color="#fff").place(x=200, y=10)
 
-        span = ctk.CTkLabel(self, text="Preencha todos os campos!", font=("Century Gothic bold", 16), text_color=["#000, #fff"]).place(x=50, y=70)
+        ficheiro = pathlib.Path("Remedios.xlsx")
+
+        if ficheiro.exists():
+            pass
+        else:
+            ficheiro=Workbook()
+            folha=ficheiro.active
+            folha['A1']="Nome"
+            folha['B1']="Codigo"
+            folha['C1']="Registro"
+            folha['D1']="Barra"
+            folha['E1']="Codigo de Barra"
+            folha['F1']="Descricao"
+            folha['G1']="Apresentcao"
+            folha['H1']="Categoria"
+            folha['I1']="Unidade"
+            folha['J1']="Classe"
+
+            ficheiro.save("Remedios.xlsx")
+
+        def submit():
+
+            nome = nome_value.get()
+            codigo = codigo_value.get()
+            regis = regis_value.get()
+            barra = barra_value.get()
+            codi = codi_value.get()
+            desc = desc_value.get()
+            apresent = apresent_value.get()
+            categ = categ_combobox.get()
+            uni = uni_combobox.get()
+            classe = classe_combobox.get()
+
+            ficheiro = openpyxl.load_workbook('Remedios')
+            folha = ficheiro.active
+            folha.cell(column=1, raw=folha.max_row+1, value=nome)
+            folha.cell(column=2, raw=folha.max_row, value=codigo)
+            folha.cell(column=3, raw=folha.max_row, value=regis)
+            folha.cell(column=4, raw=folha.max_row, value=barra)
+            folha.cell(column=5, raw=folha.max_row, value=codi)
+            folha.cell(column=6, raw=folha.max_row, value=desc)
+            folha.cell(column=7, raw=folha.max_row, value=apresent)
+            folha.cell(column=8, raw=folha.max_row, value=categ)
+            folha.cell(column=9, raw=folha.max_row, value=uni)
+            folha.cell(column=10, raw=folha.max_row, value=classe)
+
+            ficheiro.save(r"Remedios.xlsx")
+            messagebox.showinfo("Sistema", "Dados salvos com sucesso!")
+
+        def clear():
+            nome = nome_value.set("")
+            codigo = codigo_value.set("")
+            regis = regis_value.set("")
+            barra = barra_value.set("")
+            codi = codi_value.set("")
+            desc = desc_value.set("")
+            apresent = apresent_value.set("")
+
+        #Text variables
+        nome_value = StringVar()
+        codigo_value = StringVar()
+        regis_value = StringVar()
+        barra_value = StringVar()
+        codi_value = StringVar()
+        desc_value = StringVar()
+        apresent_value = StringVar()
 
         #Entry
-        nome_entry = ctk.CTkEntry(self, width=350, font=("Century Gothic", 16), fg_color="transparent")
-        contato_entry = ctk.CTkEntry(self, width=350, font=("Century Gothic", 16), fg_color="transparent")
-        idade_entry = ctk.CTkEntry(self, width=350, font=("Century Gothic", 16), fg_color="transparent")
-        endereco_entry = ctk.CTkEntry(self, width=350, font=("Century Gothic", 16), fg_color="transparent")
+        nome_entry = ctk.CTkEntry(self, width=490, textvariable=nome_value, font=("Century Gothic", 16), fg_color="transparent")
+
+        codigo_entry = ctk.CTkEntry(self, width=102, textvariable=codigo_value, font=("Century Gothic", 16), fg_color="transparent")
+        
+        barra_entry = ctk.CTkEntry(self, width=295, textvariable=barra_value, font=("Century Gothic", 16), fg_color="transparent")
+        
+        regis_entry = ctk.CTkEntry(self, width=295, textvariable=regis_value, font=("Century Gothic", 16), fg_color="transparent")
+
+        codi_entry = ctk.CTkEntry(self, width=180, textvariable=codi_value, font=("Century Gothic", 16), fg_color="transparent")
+
+        desc_entry = ctk.CTkEntry(self, width=410, textvariable=desc_value, font=("Century Gothic", 16), fg_color="transparent")
+
+        apresent_entry = ctk.CTkEntry(self, width=595, textvariable=apresent_value, font=("Century Gothic", 16), fg_color="transparent")
 
         #combobox
-        genero_combobox = ctk.CTkComboBox(self, values=["Masculino", "Feminino"], font=("Century Gothic bold", 14))
-        genero_combobox.set("Masculino")
+        categ_combobox = ctk.CTkComboBox(self, width=160, values=["Similar", "Referência", "Genérico"], font=("Century Gothic bold", 14))
+        categ_combobox.set("")
 
-        #Entrada de observacoes
-        obs_entry = ctk.CTkTextbox(self, width=500, height=150, font=("arial", 18), border_color="#aaa", border_width=2, fg_color="transparent")
+        uni_combobox = ctk.CTkComboBox(self, width=150, values=["Caixa", ""], font=("Century Gothic bold", 14))
+        uni_combobox.set("")
 
+        classe_combobox = ctk.CTkComboBox(self, width=275, values=["Sujeito a controle especial", ""], font=("Century Gothic bold", 14))
+        classe_combobox.set("")
 
         #Labels
-        lb_nome = ctk.CTkLabel(self, text="Nome completo", font=("Century Gothic bold", 16), text_color=["#000, #fff"])
-        lb_contato = ctk.CTkLabel(self, text="Contato", font=("Century Gothic bold", 16), text_color=["#000, #fff"])
-        lb_idade = ctk.CTkLabel(self, text="idade", font=("Century Gothic bold", 16), text_color=["#000, #fff"])
-        lb_genero = ctk.CTkLabel(self, text="genero", font=("Century Gothic bold", 16), text_color=["#000, #fff"])
-        lb_endereco = ctk.CTkLabel(self, text="endereco", font=("Century Gothic bold", 16), text_color=["#000, #fff"])
-        lb_obs = ctk.CTkLabel(self, text="obs", font=("Century Gothic bold", 16), text_color=["#000, #fff"])
-
+        lb_nome = ctk.CTkLabel(self, text="Nome", font=("Century Gothic bold", 16), text_color=["#000", "#fff"])
+        lb_codigo = ctk.CTkLabel(self, text="Código", font=("Century Gothic bold", 16), text_color=["#000", "#fff"])
+        lb_barra = ctk.CTkLabel(self, text="Código de Barras", font=("Century Gothic bold", 16), text_color=["#000", "#fff"])
+        lb_regis = ctk.CTkLabel(self, text="Registro no Min. Saúde", font=("Century Gothic bold", 16), text_color=["#000", "#fff"])
+        lb_codi = ctk.CTkLabel(self, text="Código D.C.B.", font=("Century Gothic bold", 16), text_color=["#000", "#fff"])
+        lb_desc = ctk.CTkLabel(self, text="Descrição D.C.B.", font=("Century Gothic bold", 16), text_color=["#000", "#fff"])
+        lb_apresent = ctk.CTkLabel(self, text="Apresentação", font=("Century Gothic bold", 16), text_color=["#000", "#fff"])
+        lb_categ = ctk.CTkLabel(self, text="Categoria", font=("Century Gothic bold", 16), text_color=["#000", "#fff"])
+        lb_uni = ctk.CTkLabel(self, text="Unidade", font=("Century Gothic bold", 16), text_color=["#000", "#fff"])
+        lb_classe = ctk.CTkLabel(self, text="Classe Terapêutica", font=("Century Gothic bold", 16), text_color=["#000", "#fff"])
 
         #Posicionando os elementos na janela
-        lb_nome.place(x=50, y=120)
-        nome_entry.place(x=50, y=150)
+        lb_nome.place(x=50, y=90)
+        nome_entry.place(x=50, y=120)
 
+        lb_codigo.place(x=545, y=90)
+        codigo_entry.place(x=545, y=120)
 
+        lb_barra.place(x=350, y=150)
+        barra_entry.place(x=350, y=180)
 
-    def change_apm(self, nova_aparencia):
-        ctk.set_appearance_mode(nova_aparencia)
+        lb_regis.place(x=50, y=150)
+        regis_entry.place(x=50, y=180)
+
+        lb_codi.place(x=50, y=210)
+        codi_entry.place(x=50, y=240)
+
+        lb_desc.place(x=235, y=210)
+        desc_entry.place(x=235, y=240)
+
+        lb_apresent.place(x=50, y=270)
+        apresent_entry.place(x=50, y=300)
+
+        lb_categ.place(x=50, y=330)
+        categ_combobox.place(x=50, y=360)
+
+        lb_uni.place(x=215, y=330)
+        uni_combobox.place(x=215, y=360)
+
+        lb_classe.place(x=370, y=330)
+        classe_combobox.place(x=370, y=360)
+
+        #botoes
+        btn_submit = ctk.CTkButton(self, text="Salvar dados".upper(), command=submit, fg_color="#3fc9c0", hover_color="#131").place(x=200, y=450)
+        btn_clear = ctk.CTkButton(self, text="Limpar dados".upper(), command=clear, fg_color="#c45e49", hover_color="#333").place(x=360, y=450)
 
 if __name__=="__main__":
     app = App()
